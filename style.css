@@ -1,0 +1,29 @@
+body {
+  background-image: url('background.jpg'); /* замените на вашу картинку фона */
+  background-size: cover;
+  background-position: center;
+  font-family: Arial, sans-serif;
+}
+
+#permissions, #devices, #location {
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+#permissions {
+  background: linear-gradient(to bottom right, #1e90ff, #00bfff);
+  color: #fff;
+}
+
+#devices {
+  background: linear-gradient(to bottom right, #ffd700, #ffa500);
+  color: #fff;
+}
+
+#location {
+  background: linear-gradient(to bottom right, #ff1493, #ff69b4);
+  color: #fff;
+}

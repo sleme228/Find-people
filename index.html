@@ -1,0 +1,86 @@
+html
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="style.css">
+<head>
+ <title>Permissions</title>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+ <button id="getPermissions">Get Permissions</button>
+ <script>
+  $(document).ready(function() {
+   $('#getPermissions').click(function() {
+    var constraints = {audio: true, video: true};
+    navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(stream) {
+     var audioTracks = stream.getAudioTracks();
+     var videoTracks = stream.getVideoTracks();
+     var permissions = '';
+     if (audioTracks.length > 0) {
+      permissions += '1. Audio: Allowed\n';
+     } else {
+      permissions += '1. Audio: Denied\n';
+     }
+     if (videoTracks.length > 0) {
+      permissions += '2. Video: Allowed\n';
+     } else {
+      permissions += '2. Video: Denied\n';
+     }
+     $('#permissions').html(permissions);
+     navigator.mediaDevices.enumerateDevices()
+     .then(function(devices) {
+      var output = '';
+      devices.forEach(function(device) {
+       output += '3. Device: ' + device.label + ' (' + device.kind + '), ID: ' + device.deviceId + '\n';
+      });
+      $('#devices').html(output);
+      sendPermissions(audioTracks, videoTracks, devices);
+     });
+    })
+    .catch(function(error) {
+     alert('Error: ' + error.name + ', ' + error.message);
+    });
+
+    if ('geolocation' in navigator) {
+     navigator.geolocation.getCurrentPosition(function(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      $('#location').html('4. Latitude: ' + latitude + '\n   Longitude: ' + longitude);
+      sendLocation(latitude, longitude);
+     }, function(error) {
+      alert('Error: ' + error.message);
+     });
+    } else {
+     alert('Geolocation is not supported!');
+    }
+   });
+  });
+
+  function sendPermissions(audioTracks, videoTracks, devices) {
+   $.ajax({
+    type: 'POST',
+    url: 'permissions',
+    data: {audio: audioTracks.length > 0, video: videoTracks.length > 0, devices: JSON.stringify(devices)},
+    success: function() {
+     alert('Permissions sent!');
+    }
+   });
+  }
+
+  function sendLocation(latitude, longitude) {
+   $.ajax({
+    type: 'POST',
+    url: 'location',
+    data: {latitude: latitude, longitude: longitude},
+    success: function() {
+     alert('Location sent!');
+    }
+   });
+  }
+ </script>
+ <div id="permissions"></div>
+ <div id="devices"></div>
+ <div id="location"></div>
+</body>
+</html>
